@@ -64,9 +64,10 @@ For each repo in `affected_repos`:
 1. Set target worktree path: `specs/{feature}/repos/{repo-name}/`
 2. Set feature branch: `feat/{feature-name}`
 3. Check existing worktrees: `git -C repos/{repo-name} worktree list`
-   - **If path already registered**: Verify branch is `feat/{feature-name}`. Log "Worktree for {repo-name} already exists, reusing." Skip creation.
+   - **If path already registered**: Verify the branch at this worktree path is `feat/{feature-name}` and is NOT `main` or `master`. Log "Worktree for {repo-name} already exists, reusing." Skip creation. If the active branch is `main` or `master`, STOP with: "ERROR: Existing worktree at specs/{feature}/repos/{repo-name}/ is on the default branch. Remove and recreate it on feat/{feature-name}."
    - **If path not registered**:
-     - Create branch if it does not exist: `git -C repos/{repo-name} branch --list feat/{feature-name}` → if empty: `git -C repos/{repo-name} branch feat/{feature-name}`
+     - Detect the repo's default branch: run `git -C repos/{repo-name} symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|origin/||'`; if empty, fall back to `git -C repos/{repo-name} rev-parse --abbrev-ref HEAD`. Store as `DEFAULT_BRANCH`.
+     - Create branch if it does not exist: `git -C repos/{repo-name} branch --list feat/{feature-name}` → if empty: `git -C repos/{repo-name} branch feat/{feature-name} {DEFAULT_BRANCH}` (always rooted at the detected default branch — never at an arbitrary HEAD)
      - Add worktree: `git -C repos/{repo-name} worktree add specs/{feature}/repos/{repo-name}/ feat/{feature-name}`
 4. Record the worktree path for this repo.
 
@@ -138,6 +139,7 @@ For each task (one at a time):
 - **REJECTED (round 3)** → dispatch debug subagent (see section below)
 
 **e) Commit** (parent-only, selective staging):
+- **Branch safety guard**: Before staging any file, verify the active branch of every target repo or worktree is NOT the default branch. For worktree commits: run `git -C specs/{feature}/repos/{repo-name}/ rev-parse --abbrev-ref HEAD`. For meta-repo commits: run `git rev-parse --abbrev-ref HEAD`. If the result is `main` or `master`, STOP immediately — do NOT stage or commit. Report: "ERROR: Target is on branch {branch}. Committing to the default branch is forbidden. Re-run worktree setup or create a feature branch before proceeding."
 - Stage only the files actually changed for this task, plus tasks.md
 - **NEVER** use `git add -A` or `git add .`
 - Use `git add <file1> <file2> ...` with explicit file paths
@@ -227,6 +229,7 @@ For tasks that add or change behavior, enforce RED → GREEN with a feature flag
 - **Strict Handoff Parsing**: Never infer implementer `STATUS` or reviewer `VERDICT` from surrounding prose; only the exact structured fields count
 - **No Destructive Reset**: Never use `git checkout .`, `git reset --hard`, or similar destructive rollback inside the implementation loop
 - **Selective Staging**: NEVER use `git add -A` or `git add .`; always stage explicit file paths
+- **Never Commit to Default Branch**: NEVER stage or commit inside a worktree or repo directory when `git rev-parse --abbrev-ref HEAD` returns `main` or `master`. Verify the active branch before every commit; stop with a clear error if the check fails.
 - **Bounded Review Rounds**: Max 2 implementer re-dispatch rounds per reviewer rejection, then debug
 - **Bounded Debug**: Max 2 debug rounds per task (debug + re-implementation per round); if still failing → BLOCKED
 - **Bounded Remediation**: Cap final-validation remediation at 3 rounds
@@ -277,4 +280,4 @@ For tasks that add or change behavior, enforce RED → GREEN with a feature flag
 
 **`repos/` absent or `affected_repos` empty after warning**:
 - Skip worktree setup
-- Implementer subagents work in the main `repos/{repo-name}/` directories (existing behavior)
+- Implementer subagents work in the main `repos/{repo-name}/` directories. Before committing in this mode, verify `git -C repos/{repo-name} rev-parse --abbrev-ref HEAD` is NOT `main` or `master`. If the repo is on its default branch, REFUSE to commit and warn: "No worktree set up and repos/{repo-name} is on the default branch. Create a feature branch (e.g., `git -C repos/{repo-name} checkout -b feat/{feature-name}`) before proceeding."
