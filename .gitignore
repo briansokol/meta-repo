@@ -1,3 +1,5 @@
 repos/
 specs/*/repos/
 .superpowers/
+.DS_Store
+**/.DS_Store
