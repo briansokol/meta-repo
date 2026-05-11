@@ -8,10 +8,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS_DIR="$SCRIPT_DIR/repos"
 
 # Update these URLs to match where you've pushed the repos
-FRONTEND_URL="${FRONTEND_URL:-https://github.com/YOUR_ORG/todo-frontend.git}"
-BACKEND_URL="${BACKEND_URL:-https://github.com/YOUR_ORG/todo-backend.git}"
-CONTRACTS_URL="${CONTRACTS_URL:-https://github.com/YOUR_ORG/todo-contracts.git}"
-INFRA_URL="${INFRA_URL:-https://github.com/YOUR_ORG/todo-infra.git}"
+FRONTEND_URL="${FRONTEND_URL:-git@github-personal.com:briansokol/todo-frontend.git}"
+BACKEND_URL="${BACKEND_URL:-git@github-personal.com:briansokol/todo-backend.git}"
+CONTRACTS_URL="${CONTRACTS_URL:-git@github-personal.com:briansokol/todo-contracts.git}"
+INFRA_URL="${INFRA_URL:-git@github-personal.com:briansokol/todo-infra.git}"
 
 clone_or_pull() {
   local name="$1"
