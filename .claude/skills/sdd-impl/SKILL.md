@@ -67,9 +67,16 @@ For each repo in `affected_repos`:
    - **If path already registered**: Verify the branch at this worktree path is `feat/{feature-name}` and is NOT `main` or `master`. Log "Worktree for {repo-name} already exists, reusing." Skip creation. If the active branch is `main` or `master`, STOP with: "ERROR: Existing worktree at specs/{feature}/repos/{repo-name}/ is on the default branch. Remove and recreate it on feat/{feature-name}."
    - **If path not registered**:
      - Detect the repo's default branch: run `git -C repos/{repo-name} symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|origin/||'`; if empty, fall back to `git -C repos/{repo-name} rev-parse --abbrev-ref HEAD`. Store as `DEFAULT_BRANCH`.
-     - Create branch if it does not exist: `git -C repos/{repo-name} branch --list feat/{feature-name}` → if empty: `git -C repos/{repo-name} branch feat/{feature-name} {DEFAULT_BRANCH}` (always rooted at the detected default branch — never at an arbitrary HEAD)
+     - Sync to latest remote commit: run `git -C repos/{repo-name} fetch origin` then `git -C repos/{repo-name} fetch origin {DEFAULT_BRANCH}:{DEFAULT_BRANCH}` to advance the local default branch ref to the latest remote HEAD without requiring it to be checked out. If `fetch` fails (e.g. no remote), log a warning and continue using the local ref.
+     - Create branch if it does not exist: `git -C repos/{repo-name} branch --list feat/{feature-name}` → if empty: `git -C repos/{repo-name} branch feat/{feature-name} {DEFAULT_BRANCH}` (always rooted at the latest default branch — never at an arbitrary HEAD)
      - Add worktree: `git -C repos/{repo-name} worktree add specs/{feature}/repos/{repo-name}/ feat/{feature-name}`
 4. Record the worktree path for this repo.
+5. Rsync git-ignored files from the main clone into the worktree so that runtime artifacts (`.env`, virtual environments, installed packages, etc.) are available without reinstalling:
+   ```bash
+   git -C repos/{repo-name} ls-files --others --ignored --exclude-standard --directory \
+     | rsync -a --files-from=- repos/{repo-name}/ specs/{feature}/repos/{repo-name}/
+   ```
+   Run this step for both newly created and already-existing worktrees. Skip silently if the `ls-files` output is empty or `rsync` is not available.
 
 Store the resulting map `WORKTREE_PATHS: { repo-name → worktree-absolute-path }` in parent context for use in implementer subagent prompts.
 

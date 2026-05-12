@@ -15,6 +15,18 @@ The four app repos are:
 | [todo-contracts](https://github.com/briansokol/todo-contracts) | OpenAPI spec (source of truth for API shapes) |
 | [todo-infra](https://github.com/briansokol/todo-infra) | Docker Compose local dev environment |
 
+## Prerequisites
+
+The following tools must be installed and available on your `PATH`:
+
+| Tool | Purpose |
+|------|---------|
+| [Git](https://git-scm.com/) | Source control |
+| [rsync](https://rsync.samba.org/) | Copying gitignored files between worktrees during SDD implementation |
+| [GitHub CLI (`gh`)](https://cli.github.com/) | Opening pull requests from SDD specs (`/sdd-pr`) |
+
+`rsync` ships with macOS and most Linux distributions. Install `gh` via Homebrew (`brew install gh`) or the [official installer](https://cli.github.com/), then run `gh auth login` once to authenticate.
+
 ## Getting started
 
 ```bash
