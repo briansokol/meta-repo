@@ -1,0 +1,181 @@
+/* ============================================================
+   Catppuccin Mocha — Slidev theme override
+   https://catppuccin.com/palette
+   ============================================================ */
+
+/* --- 1. Color palette custom properties -------------------- */
+:root {
+  --ctp-crust:    #11111b;
+  --ctp-mantle:   #181825;
+  --ctp-base:     #1e1e2e;
+  --ctp-surface0: #313244;
+  --ctp-surface1: #45475a;
+  --ctp-surface2: #585b70;
+  --ctp-overlay0: #6c7086;
+  --ctp-overlay1: #7f849c;
+  --ctp-overlay2: #9399b2;
+  --ctp-subtext0: #a6adc8;
+  --ctp-subtext1: #bac2de;
+  --ctp-text:     #cdd6f4;
+
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo:  #f2cdcd;
+  --ctp-pink:      #f5c2e7;
+  --ctp-mauve:     #cba6f7;
+  --ctp-red:       #f38ba8;
+  --ctp-maroon:    #eba0ac;
+  --ctp-peach:     #fab387;
+  --ctp-yellow:    #f9e2af;
+  --ctp-green:     #a6e3a1;
+  --ctp-teal:      #94e2d5;
+  --ctp-sky:       #89dceb;
+  --ctp-sapphire:  #74c7ec;
+  --ctp-blue:      #89b4fa;
+  --ctp-lavender:  #b4befe;
+}
+
+/* --- 2. Slidev layout overrides ---------------------------- */
+
+/* Overall slide background */
+.slidev-layout {
+  background-color: var(--ctp-base);
+  color: var(--ctp-text);
+}
+
+/* Headings */
+.slidev-layout h1 {
+  color: var(--ctp-lavender);
+}
+
+.slidev-layout h2,
+.slidev-layout h3,
+.slidev-layout h4 {
+  color: var(--ctp-subtext1);
+}
+
+/* Inline code */
+.slidev-layout :not(pre) > code {
+  background-color: var(--ctp-surface0);
+  color: var(--ctp-peach);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+/* Code blocks (Shiki) */
+.slidev-layout pre,
+.slidev-layout .shiki {
+  background-color: var(--ctp-mantle) !important;
+}
+
+.slidev-layout .shiki code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Links */
+.slidev-layout a {
+  color: var(--ctp-blue);
+}
+
+.slidev-layout a:hover {
+  color: var(--ctp-lavender);
+}
+
+/* Slide number / presenter controls */
+#slidev-goto-dialog {
+  display: none !important;
+}
+
+/* --- 3. Tailwind utility class remaps ---------------------- */
+/*
+   Specificity: .slidev-layout .class + !important beats
+   Tailwind's single-class generated styles.
+*/
+
+/* Grays → Catppuccin surface / overlay / subtext */
+.slidev-layout .bg-gray-800 { background-color: var(--ctp-surface0) !important; }
+.slidev-layout .bg-gray-700 { background-color: var(--ctp-surface1) !important; }
+.slidev-layout .bg-gray-600 { background-color: var(--ctp-surface2) !important; }
+.slidev-layout .bg-gray-500 { background-color: var(--ctp-overlay0) !important; }
+.slidev-layout .bg-gray-400 { background-color: var(--ctp-overlay1) !important; }
+
+.slidev-layout .text-gray-300 { color: var(--ctp-subtext1) !important; }
+.slidev-layout .text-gray-400 { color: var(--ctp-subtext0) !important; }
+.slidev-layout .text-gray-500 { color: var(--ctp-overlay2) !important; }
+
+.slidev-layout .border-gray-500 { border-color: var(--ctp-overlay0) !important; }
+.slidev-layout .border-gray-600 { border-color: var(--ctp-surface2) !important; }
+.slidev-layout .border-gray-700 { border-color: var(--ctp-surface1) !important; }
+
+/* Blue → Catppuccin Blue / Sapphire */
+.slidev-layout .text-blue-400 { color: var(--ctp-blue) !important; }
+.slidev-layout .text-blue-300 { color: var(--ctp-lavender) !important; }
+
+.slidev-layout .border-blue-500 { border-color: var(--ctp-blue) !important; }
+.slidev-layout .border-blue-700 { border-color: var(--ctp-sapphire) !important; }
+
+/* Tailwind generates classes like `bg-blue-900\/40` — target with attribute selectors
+   for the slash variants used in the slides. */
+.slidev-layout [class*="bg-blue-900"] {
+  background-color: color-mix(in srgb, var(--ctp-blue) 18%, transparent) !important;
+}
+
+/* Green → Catppuccin Green / Teal */
+.slidev-layout .text-green-400 { color: var(--ctp-green) !important; }
+.slidev-layout .text-green-300 { color: var(--ctp-teal) !important; }
+
+.slidev-layout .border-green-500 { border-color: var(--ctp-green) !important; }
+.slidev-layout .border-green-700 { border-color: var(--ctp-teal) !important; }
+
+.slidev-layout [class*="bg-green-900"] {
+  background-color: color-mix(in srgb, var(--ctp-green) 18%, transparent) !important;
+}
+
+/* Yellow → Catppuccin Yellow */
+.slidev-layout .text-yellow-400 { color: var(--ctp-yellow) !important; }
+.slidev-layout .text-yellow-300 { color: var(--ctp-peach) !important; }
+
+.slidev-layout .border-yellow-500 { border-color: var(--ctp-yellow) !important; }
+.slidev-layout .border-yellow-700 { border-color: var(--ctp-peach) !important; }
+
+.slidev-layout [class*="bg-yellow-900"] {
+  background-color: color-mix(in srgb, var(--ctp-yellow) 18%, transparent) !important;
+}
+
+/* Purple → Catppuccin Mauve / Lavender */
+.slidev-layout .text-purple-400 { color: var(--ctp-mauve) !important; }
+.slidev-layout .text-purple-300 { color: var(--ctp-lavender) !important; }
+
+.slidev-layout .border-purple-500 { border-color: var(--ctp-mauve) !important; }
+.slidev-layout .border-purple-700 { border-color: var(--ctp-lavender) !important; }
+
+.slidev-layout [class*="bg-purple-900"] {
+  background-color: color-mix(in srgb, var(--ctp-mauve) 18%, transparent) !important;
+}
+
+/* Red → Catppuccin Red / Maroon */
+.slidev-layout .text-red-400 { color: var(--ctp-red) !important; }
+.slidev-layout .text-red-300 { color: var(--ctp-maroon) !important; }
+
+.slidev-layout .border-red-500 { border-color: var(--ctp-red) !important; }
+.slidev-layout .border-red-700 { border-color: var(--ctp-maroon) !important; }
+
+.slidev-layout [class*="bg-red-900"] {
+  background-color: color-mix(in srgb, var(--ctp-red) 18%, transparent) !important;
+}
+
+/* Cyan → Catppuccin Sky / Teal */
+.slidev-layout .text-cyan-400 { color: var(--ctp-sky) !important; }
+.slidev-layout .text-cyan-300 { color: var(--ctp-teal) !important; }
+
+.slidev-layout .border-cyan-500 { border-color: var(--ctp-sky) !important; }
+.slidev-layout .border-cyan-700 { border-color: var(--ctp-teal) !important; }
+
+.slidev-layout [class*="bg-cyan-900"] {
+  background-color: color-mix(in srgb, var(--ctp-sky) 18%, transparent) !important;
+}
+
+/* Pink / Rose → Catppuccin Pink / Flamingo */
+.slidev-layout .text-pink-400   { color: var(--ctp-pink) !important; }
+.slidev-layout .text-rose-400   { color: var(--ctp-flamingo) !important; }
+.slidev-layout .border-pink-500 { border-color: var(--ctp-pink) !important; }
